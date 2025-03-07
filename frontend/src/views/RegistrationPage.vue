@@ -1,4 +1,5 @@
 <template>
+    <NavBar/>
     <div class="container mt-5" style="text-align: center;">
         <div class="card" style="padding: 50px;">
         <h2 class="card-title">Registration Page</h2>
@@ -26,7 +27,7 @@
 </template>
 
 <script>
-
+import NavBar from '@/components/NavBar.vue'
 export default {
     name: "RegistrationPage",
     data() {
@@ -37,6 +38,9 @@ export default {
             isManager: false
         }
     },
+    components: {
+        NavBar
+    },  
     methods: {
         async register() {
             const response = await fetch("http://localhost:5000/register", {

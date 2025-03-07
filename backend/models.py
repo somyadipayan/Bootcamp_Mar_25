@@ -18,3 +18,23 @@ class User(db.Model):
         self.email = email
         self.role = role
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    name = db.Column(db.String(80), nullable=False, unique=True)
+    # Relationship
+    products = db.relationship('Product', back_populates='category')
+
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    name = db.Column(db.String(80), nullable=False, unique=True)
+    price = db.Column(db.Float, nullable=False)
+    unit = db.Column(db.String(20), nullable=False) # Piece, KG, Litre
+    quantity = db.Column(db.Integer, nullable=False) # The amount of product in stock
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    # Relationships
+    category = db.relationship('Category', back_populates='products')
+    creator = db.relationship('User', backref='products')
+
+
