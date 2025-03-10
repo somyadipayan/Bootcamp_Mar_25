@@ -23,7 +23,7 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     name = db.Column(db.String(80), nullable=False, unique=True)
     # Relationship
-    products = db.relationship('Product', back_populates='category')
+    products = db.relationship('Product', back_populates='category', cascade="all, delete-orphan")
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)

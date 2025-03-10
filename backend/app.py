@@ -141,6 +141,7 @@ def logout():
     unset_jwt_cookies(response)
     return response
 
+# CRUD ON CATEGORY
 
 # CREATE A CATEGORY
 @app.route("/category", methods=["POST"])
@@ -154,6 +155,8 @@ def create_category():
     # Getting JSON from request
     data = request.get_json()
     name = data.get("name")
+    
+    print(name)
 
     if not name:
         return jsonify({"error": "Required Fields are empty"}), 400
@@ -163,11 +166,13 @@ def create_category():
     if existing_category:
         return jsonify({"error": f"Category {name} already exists"}), 400
 
+
+
     try:
         new_category = Category(name=name)
         db.session.add(new_category)
         db.session.commit()
-        return jsonify({"message": f"Category {name} created"}), 400
+        return jsonify({"message": f"Category {name} created"}), 200
         
     except Exception as e:
         return jsonify({"error": f"Something went wrong: {str(e)}"}), 500
@@ -195,6 +200,73 @@ def read_categories():
             }
         )
     return jsonify(categories_data)
+
+# READ A SINGLE CATEGORY
+@app.route("/category/<int:category_id>", methods=["GET"])
+def read_category(category_id):
+    category = Category.query.filter_by(id=category_id).first()
+    products = []
+    for product in category.products:
+        products.append({
+            "id":product.id,
+            "name":product.name,
+            "unit":product.unit,
+            "price":product.price,
+            "quantity":product.quantity,
+        })
+    category_data = {
+        "id": category.id,
+        "name": category.name,
+        "products": products    
+    }
+    return jsonify(category_data), 200
+
+# Update a Category # Managers and Admins
+@app.route("/category/<int:category_id>", methods=["PUT"])
+@jwt_required()
+def update_category(category_id):
+    this_user = get_jwt_identity()
+    if this_user["role"] not in ["manager", "admin"]:
+        return jsonify({"error": "You are not authorized to perform this action"}), 403
+
+    category = Category.query.filter_by(id=category_id).first()
+    if not category:
+        return jsonify({"error": "Category not found"}), 404
+
+    data = request.get_json()
+    name = data.get("name")
+
+    if not name:
+        return jsonify({"error": "Required Fields are empty"}), 400
+
+    try:
+        category.name = name
+        db.session.commit()
+        return jsonify({"message": f"Category {name} updated"}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Something went wrong: {str(e)}"}), 500
+
+# Delete a Category # Managers and Admins
+@app.route("/category/<int:category_id>", methods=["DELETE"])
+@jwt_required()
+def delete_category(category_id):
+    this_user = get_jwt_identity()
+    if this_user["role"] not in ["manager", "admin"]:
+        return jsonify({"error": "You are not authorized to perform this action"}), 403
+
+    category = Category.query.filter_by(id=category_id).first()
+    
+    if not category:
+        return jsonify({"error": "Category not found"}), 404
+
+    try:
+        db.session.delete(category)
+        db.session.commit()
+        return jsonify({"message": f"Category {category.name} deleted"}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Something went wrong: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

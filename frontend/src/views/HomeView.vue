@@ -2,7 +2,7 @@
   <NavBar/>
   <div class="home">
     <h1 v-if="user">Welcome, {{user.username}}!</h1>
-    <img alt="Vue logo" src="../assets/logo.png">
+    <img alt="Vue logo" style="max-width: 40%;" src="../assets/logo.png">
     <HelloWorld msg="Welcome to Bootcamp"/>
   </div>
 </template>

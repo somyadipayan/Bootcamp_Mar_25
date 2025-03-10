@@ -62,7 +62,7 @@ export default {
             else{
                 console.log(data.message)
                 // Redirecting to login page
-                this.$router.push("/") // Change to Login page once ready
+                this.$router.push("/login") // Change to Login page once ready
             }
 
         }
