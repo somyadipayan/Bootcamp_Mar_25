@@ -9,6 +9,7 @@
                     <p class="card-text">{{ category.products.length }} Products</p>
                     <div class="btn-group">
                         <a href="#" class="btn btn-dark">View Products</a>
+                        <router-link :to="`/create-product/${category.id}`" v-if="role == 'admin' || role == 'manager'" class="btn btn-dark">Add Product</router-link>
                         <router-link :to="`/update-category/${category.id}`" v-if="role == 'admin' || role == 'manager'" class="btn btn-dark">Edit</router-link>
                         <button v-if="role == 'admin' || role == 'manager'" class="btn btn-dark" @click="deleteCategory(category.id)">Delete</button>
                     </div>
